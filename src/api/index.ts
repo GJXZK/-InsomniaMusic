@@ -1,33 +1,60 @@
-// import axios from "axios"
-// import { ElMessage } from "element-plus"
-// import router from "@/router"
-// const baseURL = <string>import.meta.env.VITE_BASE_URL
+// 重写axios
+import axios from 'axios';
+// import vuex from '../store/index';
+import { Message } from '@arco-design/web-vue';
 
-// const service = axios.create({
-//   baseURL: baseURL,
-//   timeout: 5000,
-// })
+// 该项目所有请求均为 get请求
+export function request(url:string, params?:string) {
+  // 请求超过30秒则判定为超时
+  const instance = axios.create({
+    baseURL: '/api',
+    // baseURL:'http://www.codeman.ink:3000',
+    timeout: 30000,
+    withCredentials: true,
+  });
+  // axios拦截器
+  // 请求拦截
+  instance.interceptors.request.use(
+    (config) => {
+      // console.log('请求拦截器');
+      return config;
+    },
+    (err) => {
+      console.log(err);
+    },
+  );
 
-// service.defaults.headers.common.Authorization = localStorage.getItem("accessToken")
-//   ? "Bearer " + localStorage.getItem("accessToken")
-//   : ""
+  // 响应拦截
+  instance.interceptors.response.use(
+    (config) => {
+      const code = config.data.code;
+      if (code !== 200 && !(code >= 800 && code <= 803))
+        Message.error(config.data.message || '未知错误, 请打开控制台查看');
+      return config;
+    },
+    (err) => {
+      console.log([err]);
+      if (err.response.data.msg === '需要登录') {
+        // cookie过期 退出登录
+        // console.log(window.localStorage.getItem("userInfo"));
+        // window.localStorage.setItem("userInfo", "");
+        // 刷新页面
+        // history.go(0)
+        // 修改当前的登录状态
+        // vuex.state.isLogin = false;
+      } else {
+        // console.log(err.response.data.msg);
+        Message.error(err.response.data.message || '未知错误, 请打开控制台查看');
+      }
+    },
+  );
 
-// service.interceptors.response.use(
-//   (response) => {
-//     const res = response.data
-//     if (res.msg && res.msg.text) {
-//       ElMessage({
-//         message: res.msg.text,
-//         type: res.msg.type,
-//       })
-//     }
-//     return response
-//   },
-//   (error) => {
-//     if (error.response.status === 401) {
-//       router.push("/login")
-//     }
-//     return error.response
-//   }
-// )
-// export default service
+  instance.defaults.withCredentials = true;
+
+  if (params) {
+    const query = { params };
+    return instance.get(url, query);
+  } else {
+    return instance.get(url);
+  }
+}
