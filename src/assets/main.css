@@ -20,3 +20,9 @@ a,
 
 @media (min-width: 1024px) {
 }
+.arco-menu-light .arco-menu-item.arco-menu-selected{
+  color:#CD696C !important;
+}
+.arco-menu-light .arco-menu-item.arco-menu-selected .arco-icon{
+  color:#CD696C !important;
+}
