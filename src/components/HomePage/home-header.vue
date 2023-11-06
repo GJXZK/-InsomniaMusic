@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import useSearchKeyword from '@/stores/homePage'
 let searchKeyWord = ref('')
 const route = useRoute()
 const router = useRouter()
-const searchSong = () => {
-  
-}
+const SearchKeyword = useSearchKeyword()
 function SearchFocus() {}
 function onSubmit() {
+  SearchKeyword.updateKeyword(searchKeyWord.value)
   router.push('search')
 }
 </script>
