@@ -1,19 +1,42 @@
 <script setup lang="ts">
-    import discoverApi from '@/api/Discover/index'
-    import { onMounted, ref } from 'vue';
-    let a = [];
-    async function getBannerLists(){
-      const res = await discoverApi.getBannerList()
-    }
-    onMounted(() => {
-      getBannerLists()
-    })
+import discoverApi from '@/api/Discover/index'
+import { onMounted, ref } from 'vue'
+let banners:{banners:[]} = {banners:[]}
+async function getBannerLists() {
+  const res = await discoverApi.getBannerList()
+  banners = res
+}
+onMounted(() => {
+  getBannerLists()
+})
 </script>
 <template>
-  <div class="h-full bg-blue">
-    <div class="flex">
-      <h1>发现</h1>
+  <div class="h-full">
+    <!-- 轮播图 -->
+
+    <div class="w-full h-40% flex justify-center mt-10px">
+      <a-carousel
+        :autoPlay="true"
+        animation-name="card"
+        show-arrow="never"
+        indicator-position="outer"
+        :style="{
+          width: '90%',
+          height: '100%'
+        }"
+      >
+        <a-carousel-item v-for="image in banners.banners" :style="{ width: '60%' }">
+          <img
+            :src="image.imageUrl"
+            :style="{
+              width: '100%',
+              borderRadius:'10px',
+            }"
+          />
+        </a-carousel-item>
+      </a-carousel>
     </div>
+    <div class="flex"></div>
   </div>
 </template>
 <style scoped></style>
