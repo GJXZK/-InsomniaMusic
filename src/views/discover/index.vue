@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import discoverApi from '@/api/Discover/index'
 import { onMounted, ref } from 'vue'
-let banners:{banners:[]} = {banners:[]}
+import type{ BannerDto } from '@/model/discover'
+import type { Ref } from 'vue'
+let banners:Ref<BannerDto[]> = ref([])
 async function getBannerLists() {
   const res = await discoverApi.getBannerList()
-  banners = res
+  banners.value = res
+  console.log(banners.value);
+  
 }
 onMounted(() => {
   getBannerLists()
@@ -13,7 +17,7 @@ onMounted(() => {
 <template>
   <div class="h-full">
     <!-- 轮播图 -->
-
+    
     <div class="w-full h-40% flex justify-center mt-10px">
       <a-carousel
         :autoPlay="true"
@@ -25,7 +29,7 @@ onMounted(() => {
           height: '100%'
         }"
       >
-        <a-carousel-item v-for="image in banners.banners" :style="{ width: '60%' }">
+        <a-carousel-item v-for="image in banners" :style="{ width: '60%' }">
           <img
             :src="image.imageUrl"
             :style="{

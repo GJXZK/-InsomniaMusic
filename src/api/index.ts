@@ -7,8 +7,8 @@ import { Message } from '@arco-design/web-vue';
 export function request(url:string, params?:string) {
   // 请求超过30秒则判定为超时
   const instance = axios.create({
-    baseURL: '/api',
-    // baseURL:'http://www.codeman.ink:3000',
+    // baseURL: '/api',
+    baseURL:'http://www.codeman.ink:3000',
     timeout: 30000,
     withCredentials: true,
   });
@@ -29,23 +29,11 @@ export function request(url:string, params?:string) {
     (config) => {
       const code = config.data.code;
       if (code !== 200 && !(code >= 800 && code <= 803))
-        Message.error(config.data.message || '未知错误, 请打开控制台查看');
+        Message.error( '未知错误, 请打开控制台查看');
       return config;
     },
     (err) => {
       console.log([err]);
-      if (err.response.data.msg === '需要登录') {
-        // cookie过期 退出登录
-        // console.log(window.localStorage.getItem("userInfo"));
-        // window.localStorage.setItem("userInfo", "");
-        // 刷新页面
-        // history.go(0)
-        // 修改当前的登录状态
-        // vuex.state.isLogin = false;
-      } else {
-        // console.log(err.response.data.msg);
-        Message.error(err.response.data.message || '未知错误, 请打开控制台查看');
-      }
     },
   );
 

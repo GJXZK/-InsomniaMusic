@@ -1,7 +1,8 @@
 import { request } from "..";
-const getBannerList = async(): Promise<{banners:[]}>=>{
-    const resp = await request('/banner')
-    return resp.data
+import type{ BannerDto } from "@/model/discover";
+const getBannerList = async(): Promise<BannerDto[]>=>{
+    let resp = await request('/banner')
+    return resp.data.banners
 }
 export default {
     getBannerList
