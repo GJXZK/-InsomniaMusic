@@ -20,7 +20,7 @@ async function getSearchSongByKeyword(keyword: string) {
   let resp = await searchApi.goSearch(keyword)
   getShowSearchSongs(resp)
 }
-// 将搜索结果转换为可以在表格中使用的数据aaaaaa
+// 将搜索结果转换为可以在表格中使用的数据
 function getShowSearchSongs(data: []) {
   SearchRequest.value = []
   data.forEach((item) => {
