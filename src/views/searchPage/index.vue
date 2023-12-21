@@ -1,27 +1,22 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import useSearchKeywords from '@/stores/homePage'
-import type { SearchSongsDto } from '@/model/search'
+import type { SearchSongsDto, SearchSongsResDto } from '@/model/search'
 const SearchKeywords = useSearchKeywords()
 import searchApi from '@/api/Search/search'
 import type { Ref } from 'vue'
-import {useGlobalStore} from '@/stores/global'
+import { useGlobalStore } from '@/stores/global'
 const globalStore = useGlobalStore()
-const searchPageHeight = computed(()=>{
-  return {
-    height:`${globalStore.windowHeight}px`
-  }
-})
 // 展示在表格里的数据aa
 const SearchRequest: Ref<SearchSongsDto[]> = ref([])
 // 搜索歌曲
 async function getSearchSongByKeyword(keyword: string) {
-  console.log(keyword)
-  let resp = await searchApi.goSearch(keyword)
-  getShowSearchSongs(resp)
+  const SearchSongs = ref<SearchSongsResDto[]>([])
+  SearchSongs.value = await searchApi.goSearch(keyword)
+  getShowSearchSongs(SearchSongs.value)
 }
 // 将搜索结果转换为可以在表格中使用的数据test
-function getShowSearchSongs(data: []) {
+function getShowSearchSongs(data: SearchSongsResDto[]) {
   SearchRequest.value = []
   data.forEach((item) => {
     SearchRequest.value.push({
@@ -61,36 +56,35 @@ const columns = [
     title: '专辑',
     dataIndex: 'album',
     slotName: 'album'
-
   }
 ]
-const pagination={pageSize:30}
+const pagination = { pageSize: 30 }
+function test(){
+  alert("success")
+}
 </script>
 <template>
-  <div class="h-full ">
+  <div class="h-full">
     <div>
       <!-- 搜索关键词 -->
       <div class="ml-20px">
-        <h1>搜索：{{ SearchKeywords.searchKeyword }}{{ globalStore.windowHeight }}</h1>
+        <h1>搜索：{{ SearchKeywords.searchKeyword }}{{ globalStore.windowHeight-140 }}</h1>
       </div>
-      <div class="p-20px" >
-        <a-table 
-          :columns="columns" 
-          :data="SearchRequest" 
-          :bordered="false" 
-          :pagination="pagination" 
-          pageSize="30"
-          :virtual-list-props="{searchPageHeight}"
+      <div class="p-20px">
+        <a-table
+          :columns="columns"
+          :data="SearchRequest"
+          :bordered="false"
+          :pagination="pagination"
+          :scroll="{ x: '100%', y:globalStore.windowHeight-330 }"
         >
-          <!-- 音乐标题 -->
           <template #name="{ record }">
             <div class="flex items-center cursor-pointer">
-              <span @click="">
+              <span @click="" @dblclick="test">
                 {{ record.name }}
               </span>
             </div>
           </template>
-          <!-- 歌手 -->
           <template #singer="{ record }">
             <div class="flex items-center cursor-pointer">
               <span @click="">
@@ -98,7 +92,7 @@ const pagination={pageSize:30}
               </span>
             </div>
           </template>
-          <!-- 专辑 -->
+
           <template #album="{ record }">
             <div class="flex items-center cursor-pointer">
               <span @click="">
