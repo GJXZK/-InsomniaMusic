@@ -1,6 +1,6 @@
-# fenglingV1
-
-This template should help get you started developing with Vue 3 in Vite.
+# Insomniamusic
+根据网易云接口开发的音乐网站(开发中)
+[接口地址](https://github.com/Binaryify/NeteaseCloudMusicApi)
 
 ## Recommended IDE Setup
 
