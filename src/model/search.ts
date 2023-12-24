@@ -4,6 +4,7 @@ export interface SearchSongsDto {
     singer:string;
     album:string;
     long:string;
+    
 }
 export interface SearchSongsResDto{
     name:string;

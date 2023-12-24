@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { reactive, ref, type Ref } from 'vue';
+import { useMusicDetail } from '@/stores/music';
+import { handleMusicTime } from '@/plugins/utils';
 
-
+let MusicPlayingTime = ref("")
+const MusicDetail = useMusicDetail()
 const musicInfo = reactive({
     musicUrl:"",
     musicDetail:"",
@@ -23,16 +26,12 @@ function changeMusic(state:string){
 function changePlayState(){
 
 }
+const audioPlayer = ref()
+let playProgress = ref(0)
 // 更新播放时间
 function tiemupdate() {
-//   let time = this.$refs.audioPlayer.currentTime;
-//   this.$store.commit("updateCurrentTime", time);
-//   time = Math.floor(time);
-//   if (time !== lastSecond) {
-//     lastSecond = time;
-//     this.currentTime = time;
-//     this.timeProgress = Math.floor((time / durationNum) * 100);
-//   }
+  MusicPlayingTime.value = handleMusicTime(audioPlayer.value.currentTime)
+  playProgress.value = audioPlayer.value.currentTime/MusicDetail.musicTime*1000
 }
 function openMusicDetailCard(){
 
@@ -40,10 +39,11 @@ function openMusicDetailCard(){
 
 </script>
 <template>
-  <div class="fixed bottom-0 w-full h-70px bg-#c91317">
-    <div class="bottomControl">
+  <div class="fixed bottom-0 w-full h-70px border-2 border-pink">
+    <div class="h-full flex justify-between items-center">
+      <!-- 音乐播放器 -->
       <audio
-        :src="musicInfo.musicUrl"
+        :src="MusicDetail.PlayingMusicUrl"
         autoplay
         ref="audioPlayer"
         @play="changeState(true)"
@@ -52,8 +52,8 @@ function openMusicDetailCard(){
         @timeupdate="tiemupdate"
       ></audio>
       <!-- bottom左侧 歌曲图标 点击图标弹出播放界面 歌曲信息 -->
-      <div class="left">
-        <div class="musicpic" @click="openMusicDetailCard">
+      <div class="w-200px">
+        <div class="" @click="openMusicDetailCard">
           <img :src="musicInfo.musicDetail" />
         </div>
         <div class="musicInfo">
@@ -63,7 +63,7 @@ function openMusicDetailCard(){
         </div>
       </div>
       <!-- bottom中间 歌曲操作 上一首 下一首 暂停 进度条-->
-      <div class="center">
+      <div class="w-1000px">
         <!-- 歌曲操作 -->
         <div class="controls">
           <span @click="musicState.playType = musicState.playType == 'order' ? 'random' : 'order'">
@@ -87,50 +87,38 @@ function openMusicDetailCard(){
         <!-- liners 进度条 -->
         <!-- 进度条 -->
         <div class="progressBar">
-          <span class="currentTime">{{ musicState.currentTime | handleMusicTime }}</span>
-          <!-- :value 是单向的  要实现双向要v-model -->
-          <el-slider
-            class="progressSlider"
-            v-model="timeProgress"
-            :show-tooltip="false"
-            :disabled="musicList.length == 0"
-            @change="dragSlider"
-          ></el-slider>
+          {{ MusicPlayingTime }}
+         <a-progress :percent="playProgress" :style="{width:'80%'}">
+            <template v-slot:text="scope" >
+              进度 {{MusicDetail.musicTimeFormat}}
 
-          <span class="totalTime">{{ duration }}</span>
+            </template>
+          </a-progress>
+          <a-slider :model-value="playProgress" :min="0" :max="1"  :style="{ width: '800px',hight:'10px'}" />
+          <span class="totalTime">{{  }}</span>
         </div>
       </div>
       <!-- bottom右侧  音量控制 播放列表  -->
-      <div class="right">
+      <div class="w-200px">
         <div class="volumeControl">
           <i class="iconfont icon-yinliang"></i>
-          <el-slider
-            class="volumeSlider"
-            v-model="volume"
-            @input="changeVolume"
-            :show-tooltip="false"
-          ></el-slider>
+          
         </div>
-        <div class="playList" @click="openDrawer">
-          <i class="iconfont icon-bofangliebiao"></i>
-        </div>
-        <el-drawer :visible.sync="drawer" :with-header="false" size="100">
-          <div class="drawerHeader">总{{ musicList.length }}首</div>
-          <el-table
-            :data="musicList"
-            stripe
-            style="width: 100%"
-            :show-header="false"
-            @row-dblclick="clickRow"
-            highlight-current-row
-            lazy
-          >
-            <el-table-column prop="name" width="150px"></el-table-column>
-            <el-table-column prop="ar[0].name" width="80px"></el-table-column>
-            <el-table-column prop="dt" width="70px"></el-table-column>
-          </el-table>
-        </el-drawer>
+        
       </div>
     </div>
   </div>
 </template>
+<style>
+.arco-slider-bar{
+  height: 5px !important;
+  background-color: red !important;
+}
+.arco-slider-btn::after{
+  border-color: red !important;
+}
+.arco-slider-track::before{
+  height: 5px !important;
+}
+
+</style>

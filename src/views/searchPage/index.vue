@@ -2,12 +2,18 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import useSearchKeywords from '@/stores/homePage'
 import type { SearchSongsDto, SearchSongsResDto } from '@/model/search'
-const SearchKeywords = useSearchKeywords()
 import searchApi from '@/api/Search/search'
+import musicApi from '@/api/MusicApi/music'
 import type { Ref } from 'vue'
 import { useGlobalStore } from '@/stores/global'
+import { useMusicDetail } from '@/stores/music'
+import type { MusicUrlDto } from '@/model/music'
+import router from '@/router'
+import {handleMusicTime} from '@/plugins/utils'
+const SearchKeywords = useSearchKeywords()
 const globalStore = useGlobalStore()
-// 展示在表格里的数据aa
+const MusicDetail = useMusicDetail()
+// 展示在表格里的数据
 const SearchRequest: Ref<SearchSongsDto[]> = ref([])
 // 搜索歌曲
 async function getSearchSongByKeyword(keyword: string) {
@@ -28,9 +34,21 @@ function getShowSearchSongs(data: SearchSongsResDto[]) {
     })
   })
 }
+const scrollStyle = computed(() => {
+  return {
+    height: `${globalStore.windowHeight - 140}px`,
+    'overflow-y': 'auto',
+    'overflow-x': 'hidden'
+  }
+})
 
 onMounted(async () => {
-  getSearchSongByKeyword(SearchKeywords.searchKeyword)
+  if (SearchKeywords.searchKeyword != '') {
+    getSearchSongByKeyword(SearchKeywords.searchKeyword)
+  }else{
+    router.push("discover")
+  }
+  
 })
 
 watch(
@@ -59,50 +77,59 @@ const columns = [
   }
 ]
 const pagination = { pageSize: 30 }
-function test(){
-  alert("success")
+async function getMusicUrlAndPlay(record: SearchSongsDto) {
+  let musicUrl: Ref<MusicUrlDto[]> = ref([])
+  musicUrl.value[0] = await musicApi.getMusicUrl(record.id)
+  MusicDetail.updateMusic(musicUrl.value[0].url)
+  let time = handleMusicTime(musicUrl.value[0].time)
+  MusicDetail.updateMusicTimeFormat(time)
+  MusicDetail.updateMusicTime(musicUrl.value[0].time)
 }
+async function test(record: SearchSongsDto) {}
 </script>
 <template>
   <div class="h-full">
-    <div>
-      <!-- 搜索关键词 -->
-      <div class="ml-20px">
-        <h1>搜索：{{ SearchKeywords.searchKeyword }}{{ globalStore.windowHeight-140 }}</h1>
-      </div>
-      <div class="p-20px">
-        <a-table
-          :columns="columns"
-          :data="SearchRequest"
-          :bordered="false"
-          :pagination="pagination"
-          :scroll="{ x: '100%', y:globalStore.windowHeight-330 }"
-        >
-          <template #name="{ record }">
-            <div class="flex items-center cursor-pointer">
-              <span @click="" @dblclick="test">
-                {{ record.name }}
-              </span>
-            </div>
-          </template>
-          <template #singer="{ record }">
-            <div class="flex items-center cursor-pointer">
-              <span @click="">
-                {{ record.singer }}
-              </span>
-            </div>
-          </template>
+    <a-scrollbar :style="scrollStyle">
+      <div>
+        <!-- 搜索关键词 -->
+        <div class="ml-20px">
+          <h1>搜索：{{ SearchKeywords.searchKeyword }}</h1>
+        </div>
+        <div class="p-20px">
+          <a-table
+            :columns="columns"
+            :data="SearchRequest"
+            :bordered="false"
+            :pagination="pagination"
+            :scroll="{ x: '100%' }"
+          >
+            <!-- y:globalStore.windowHeight-330  -->
+            <template #name="{ record }">
+              <div class="flex items-center cursor-pointer">
+                <span @click="" @dblclick="getMusicUrlAndPlay(record)">
+                  {{ record.name }}
+                </span>
+              </div>
+            </template>
+            <template #singer="{ record }">
+              <div class="flex items-center cursor-pointer">
+                <span @click="">
+                  {{ record.singer }}
+                </span>
+              </div>
+            </template>
 
-          <template #album="{ record }">
-            <div class="flex items-center cursor-pointer">
-              <span @click="">
-                {{ record.album }}
-              </span>
-            </div>
-          </template>
-        </a-table>
+            <template #album="{ record }">
+              <div class="flex items-center cursor-pointer">
+                <span @click="">
+                  {{ record.album }}
+                </span>
+              </div>
+            </template>
+          </a-table>
+        </div>
       </div>
-    </div>
+    </a-scrollbar>
   </div>
 </template>
 <style scoped></style>

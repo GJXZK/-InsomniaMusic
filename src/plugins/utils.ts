@@ -1,73 +1,79 @@
 // 格式化时间
-export function formatDate(date:Date, fmt:string) {
-    // 1.获取年份
-    // y+ 1个或者多个y  yyyy:2021
-    // y* 0个或者多个y
-    // y? 0个或者1个y
-    if (/(y+)/.test(fmt)) {
-      // RegExp.$1 指的是与正则表达式匹配的第一个子匹配
-      fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
-    }
-  
-    // 2.获取月日等
-    let o = {
-      'M+': date.getMonth() + 1,
-      'd+': date.getDate(),
-      'h+': date.getHours(),
-      'm+': date.getMinutes(),
-      's+': date.getSeconds(),
-    };
-    for (let k in o) {
-      if (new RegExp(`(${k})`).test(fmt)) {
-        let str = o[k] + '';
-        fmt = fmt.replace(RegExp.$1, RegExp.$1.length === 1 ? str : padLeftZero(str));
-      }
-    }
-    return fmt;
+export function formatDate(date: Date, fmt: string): string {
+  // 1.获取年份
+  // y+ 1个或者多个y  yyyy:2021
+  // y* 0个或者多个y
+  // y? 0个或者1个y
+  const yearMatch = fmt.match(/(y+)/);
+  if (yearMatch) {
+    const yearToken = yearMatch[0];
+    fmt = fmt.replace(yearToken, String(date.getFullYear()).slice(4 - yearToken.length));
   }
-  
-  // 不足两位补足两位 04:05:09
-  function padLeftZero(str:string) {
-    // str=4 -> 004 截取 1 位 -> 04
-    return ('00' + str).substr(str.length);
-  }
-  
-  // 处理大于1w的数字
-  export function handleNum(num:number) {
-    if (num > 10000) {
-      num = (num / 10000).toFixed(1);
-      return num + '万';
-    } else {
-      return num;
+
+  // 2.获取月日等
+  const o = {
+    'M+': date.getMonth() + 1,
+    'd+': date.getDate(),
+    'h+': date.getHours(),
+    'm+': date.getMinutes(),
+    's+': date.getSeconds(),
+  };
+
+  for (const k in o) {
+    const tokenMatch = fmt.match(new RegExp(`(${k})`));
+    if (tokenMatch) {
+      const token = tokenMatch[0];
+      const str = String(o[k as keyof typeof o]); // 显式类型断言
+      fmt = fmt.replace(token, token.length === 1 ? str : padLeftZero(str));
     }
   }
-  
-  // 处理音乐时长的时间
-  export function handleMusicTime(time:Date) {
-    // 如果超过了100000 基本都是毫秒为单位的了 先转成秒的
-    time = parseInt(time);
-    if (time > 10000) {
-      time = Math.floor(time / 1000);
-    } else {
-      time = Math.floor(time);
-    }
-    let m = Math.floor(time / 60);
-    let s = Math.floor(time % 60);
-    m = m < 10 ? '0' + m : m;
-    s = s < 10 ? '0' + s : s;
-    return m + ':' + s;
+
+  return fmt;
+}
+
+// 辅助函数，补齐左侧零位
+function padLeftZero(str: string): string {
+  return ('00' + str).slice(-2);
+}
+
+
+// 处理大于1w的数字
+export function handleNum(num: number) {
+  let numString = ""
+  if (num > 10000) {
+    let numString = (num / 10000).toFixed(1);
+    return numString + '万';
+  } else {
+    return numString;
   }
-  
-  // 将播放时长还原为秒数
-  export function returnSecond(time) {
-    time = time.split(':');
-    let m = parseInt(time[0]);
-    let s = parseInt(time[1]);
-    return m * 60 + s;
+}
+
+// 处理音乐时长的时间
+export function handleMusicTime(time: number): string {
+  let timeValue = time
+  if (timeValue > 10000) {
+    timeValue = Math.floor(timeValue / 1000);
+  } else {
+    timeValue = Math.floor(timeValue);
   }
-  
-  // 生成当前时间戳
-  export function getTimeStamp() {
-    return Date.now();
-  }
-  
+
+  let m = Math.floor(timeValue / 60).toString();
+  let s = Math.floor(timeValue % 60).toString();
+  m = m.length === 1 ? '0' + m : m;
+  s = s.length === 1 ? '0' + s : s;
+
+  return m + ':' + s;
+}
+
+// 将播放时长还原为秒数
+export function returnSecond(time: string) {
+  let timeArray = time.split(':');
+  let m = parseInt(timeArray[0]);
+  let s = parseInt(timeArray[1]);
+  return m * 60 + s;
+}
+
+// 生成当前时间戳
+export function getTimeStamp() {
+  return Date.now();
+}
