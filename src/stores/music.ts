@@ -1,10 +1,22 @@
 import { ref, type Ref } from 'vue'
 import { defineStore } from 'pinia'
-
+import type { MusicInfoDto,SingerDto } from '@/model/music'
 export const useMusicDetail = defineStore('PlayingMusicUrl', () => {
   let PlayingMusicUrl = ref("")
   let musicTimeFormat = ref("")
   let musicTime = ref(0)
+  let picUrl = ref("")
+  let musicName = ref("")
+  let musicSinger:Ref<SingerDto[]> = ref([])
+  function updateMusicInfo(data:MusicInfoDto){
+    PlayingMusicUrl.value = data.musicUrl
+    picUrl.value = data.picUrl
+    musicTime.value = data.musicTime
+    musicTimeFormat.value = data.musicTimeFormat
+    musicName.value = data.name
+    musicSinger.value = data.singer
+    
+  }
   function updateMusicTimeFormat(time:string){
     musicTimeFormat.value = time
   }
@@ -14,5 +26,7 @@ export const useMusicDetail = defineStore('PlayingMusicUrl', () => {
   function updateMusicTime(time: number){
     musicTime.value = time
   }
-  return {PlayingMusicUrl, musicTime,musicTimeFormat,updateMusic,updateMusicTime,updateMusicTimeFormat}
+  
+  
+  return {musicName,musicSinger,PlayingMusicUrl, musicTime,musicTimeFormat,picUrl,updateMusic,updateMusicTime,updateMusicTimeFormat,updateMusicInfo}
 })

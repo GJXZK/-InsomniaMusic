@@ -52,13 +52,16 @@ function openMusicDetailCard(){
         @timeupdate="tiemupdate"
       ></audio>
       <!-- bottom左侧 歌曲图标 点击图标弹出播放界面 歌曲信息 -->
-      <div class="w-200px">
-        <div class="" @click="openMusicDetailCard">
-          <img :src="musicInfo.musicDetail" />
+      <div class="w-200px h-70px flex items-center">
+        <div class="w-70px flex items-center ml-30px" @click="openMusicDetailCard">
+          <img :style="{width:'70%'}" :src="MusicDetail.picUrl" />
         </div>
         <div class="musicInfo">
-          <div class="singer" v-if="musicInfo.singer">
-            {{ musicInfo.name }}
+          <div class="singer" v-if="1">
+            {{ MusicDetail.musicName }}
+          </div>
+          <div class="singer" v-if="1">
+            {{ MusicDetail.musicSinger[0] }}
           </div>
         </div>
       </div>
@@ -88,14 +91,8 @@ function openMusicDetailCard(){
         <!-- 进度条 -->
         <div class="progressBar">
           {{ MusicPlayingTime }}
-         <a-progress :percent="playProgress" :style="{width:'80%'}">
-            <template v-slot:text="scope" >
-              进度 {{MusicDetail.musicTimeFormat}}
-
-            </template>
-          </a-progress>
-          <a-slider :model-value="playProgress" :min="0" :max="1"  :style="{ width: '800px',hight:'10px'}" />
-          <span class="totalTime">{{  }}</span>
+          <a-slider :model-value="playProgress" :min="0" :max="1"  :style="{ width: '800px',hight:'10px', padding:'10px'}" />
+          {{ MusicDetail.musicTimeFormat }}
         </div>
       </div>
       <!-- bottom右侧  音量控制 播放列表  -->

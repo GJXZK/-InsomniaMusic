@@ -7,9 +7,9 @@ import musicApi from '@/api/MusicApi/music'
 import type { Ref } from 'vue'
 import { useGlobalStore } from '@/stores/global'
 import { useMusicDetail } from '@/stores/music'
-import type { MusicUrlDto } from '@/model/music'
+import type { MusicInfoDto, MusicUrlDto } from '@/model/music'
 import router from '@/router'
-import {handleMusicTime} from '@/plugins/utils'
+import { handleMusicTime } from '@/plugins/utils'
 const SearchKeywords = useSearchKeywords()
 const globalStore = useGlobalStore()
 const MusicDetail = useMusicDetail()
@@ -17,12 +17,12 @@ const MusicDetail = useMusicDetail()
 const SearchRequest: Ref<SearchSongsDto[]> = ref([])
 // 搜索歌曲
 async function getSearchSongByKeyword(keyword: string) {
-  const SearchSongs = ref<SearchSongsResDto[]>([])
+  const SearchSongs = ref<SearchSongsDto[]>([])
   SearchSongs.value = await searchApi.goSearch(keyword)
   getShowSearchSongs(SearchSongs.value)
 }
 // 将搜索结果转换为可以在表格中使用的数据test
-function getShowSearchSongs(data: SearchSongsResDto[]) {
+function getShowSearchSongs(data: SearchSongsDto[]) {
   SearchRequest.value = []
   data.forEach((item) => {
     SearchRequest.value.push({
@@ -30,7 +30,13 @@ function getShowSearchSongs(data: SearchSongsResDto[]) {
       id: item.id,
       singer: item.ar[0].name,
       album: item.al.name,
-      long: '1000'
+      long: '1000',
+      ar: [],
+      al: {
+        id: item.al.id,
+        name: item.al.name,
+        picUrl: item.al.picUrl
+      }
     })
   })
 }
@@ -45,10 +51,9 @@ const scrollStyle = computed(() => {
 onMounted(async () => {
   if (SearchKeywords.searchKeyword != '') {
     getSearchSongByKeyword(SearchKeywords.searchKeyword)
-  }else{
-    router.push("discover")
+  } else {
+    router.push('discover')
   }
-  
 })
 
 watch(
@@ -80,10 +85,17 @@ const pagination = { pageSize: 30 }
 async function getMusicUrlAndPlay(record: SearchSongsDto) {
   let musicUrl: Ref<MusicUrlDto[]> = ref([])
   musicUrl.value[0] = await musicApi.getMusicUrl(record.id)
-  MusicDetail.updateMusic(musicUrl.value[0].url)
   let time = handleMusicTime(musicUrl.value[0].time)
-  MusicDetail.updateMusicTimeFormat(time)
-  MusicDetail.updateMusicTime(musicUrl.value[0].time)
+  let MusicInfo: Ref<MusicInfoDto> = ref({
+    name: record.name,
+    singer: record.ar,
+    musicUrl: musicUrl.value[0].url,
+    musicTime: musicUrl.value[0].time,
+    musicTimeFormat: time,
+    picUrl: record.al.picUrl
+  })
+  MusicDetail.updateMusicInfo(MusicInfo.value)
+  console.log(record);
 }
 async function test(record: SearchSongsDto) {}
 </script>
