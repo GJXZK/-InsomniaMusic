@@ -6,8 +6,8 @@ export const useMusicDetail = defineStore('PlayingMusicUrl', () => {
   let musicTimeFormat = ref("")
   let musicTime = ref(0)
   let picUrl = ref("")
-  let musicName = ref("")
-  let musicSinger:Ref<SingerDto[]> = ref([])
+  let musicName = ref("我想睡觉")
+  let musicSinger = ref("")
   function updateMusicInfo(data:MusicInfoDto){
     PlayingMusicUrl.value = data.musicUrl
     picUrl.value = data.picUrl

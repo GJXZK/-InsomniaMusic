@@ -6,7 +6,7 @@ export interface MusicUrlDto{
 
 export interface MusicInfoDto {
     name:string;
-    singer:SingerDto[];
+    singer:string;
     musicUrl:string;
     musicTimeFormat:string;
     musicTime:number;

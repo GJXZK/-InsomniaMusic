@@ -88,14 +88,13 @@ async function getMusicUrlAndPlay(record: SearchSongsDto) {
   let time = handleMusicTime(musicUrl.value[0].time)
   let MusicInfo: Ref<MusicInfoDto> = ref({
     name: record.name,
-    singer: record.ar,
+    singer: record.singer,
     musicUrl: musicUrl.value[0].url,
     musicTime: musicUrl.value[0].time,
     musicTimeFormat: time,
     picUrl: record.al.picUrl
   })
   MusicDetail.updateMusicInfo(MusicInfo.value)
-  console.log(record);
 }
 async function test(record: SearchSongsDto) {}
 </script>
