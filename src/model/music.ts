@@ -21,3 +21,8 @@ export interface AlbumDto{
     picUrl:string;
     id:string;
 }
+export interface GeneralMusicDto{
+    name:string;
+    singer:string;
+    id:string;
+}

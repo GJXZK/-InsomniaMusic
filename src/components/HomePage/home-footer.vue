@@ -26,12 +26,19 @@ const musicState = reactive({
   playState: true,
   currentTime: 0
 })
+const musicList:Ref<> = reactive({})
 function changeState(state: boolean) {
-  // audioPlayer.value.play()
-  audioPlayer.value.pause()
+  if(state) {
+    audioPlayer.value.play()
+  }else{
+    audioPlayer.value.pause()
+  }
+  musicState.playState = !musicState.playState
+  
 }
-function changeMusic(state: string) {}
-function changePlayState() {}
+function changeMusic(state: string) {
+
+}
 const audioPlayer = ref()
 let playProgress = ref(0)
 // 更新播放时间
@@ -70,7 +77,7 @@ function dragSlider(number: number) {
             {{ MusicDetail.musicName }}
           </div>
           <div class="singer" v-if="1">
-            {{ MusicDetail.musicSinger[0] }}
+            {{ MusicDetail.musicSinger }}
           </div>
         </div>
       </div>
@@ -93,8 +100,11 @@ function dragSlider(number: number) {
               </span>
             </div>
             <div class="flex justify-center">
-              <span @click="changeState(true)">
+              <span @click="changeState(true)" v-if="!musicState.playState">
                 <icon-play-arrow-fill size="24" />
+              </span>
+              <span @click="changeState(false)" v-else>
+                <icon-pause size="24" />
               </span>
             </div>
             <div class="flex justify-center">
