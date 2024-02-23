@@ -26,7 +26,7 @@ const musicState = reactive({
   playState: true,
   currentTime: 0
 })
-const musicList:Ref<> = reactive({})
+// const musicList:Ref<> = reactive({})
 function changeState(state: boolean) {
   if(state) {
     audioPlayer.value.play()
@@ -95,22 +95,24 @@ function dragSlider(number: number) {
               </span>
             </div> -->
             <div class="flex justify-center">
-              <span @click="musicState.musicList.length != 0 ? changeMusic('pre') : ''">
-                <icon-skip-previous-fill size="24" />
+              <span>
+                <icon-skip-previous-fill size="25" />
               </span>
             </div>
             <div class="flex justify-center">
               <span @click="changeState(true)" v-if="!musicState.playState">
-                <icon-play-arrow-fill size="24" />
+                <icon-play-arrow-fill size="25" />
               </span>
               <span @click="changeState(false)" v-else>
-                <icon-pause size="24" />
+                <icon-pause size="25" />
               </span>
             </div>
             <div class="flex justify-center">
-              <span @click="musicState.musicList.length != 0 ? changeMusic('next') : ''">
-                <icon-skip-next-fill size="24" />
-              </span>
+              <!-- <span @click="musicState.musicList.length != 0 ? changeMusic('next') : ''"> -->
+                <span>
+                <icon-skip-next-fill size="25" color="pink"/>
+                  
+                </span>
             </div>
           </div>
         </div>
