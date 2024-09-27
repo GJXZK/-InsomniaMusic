@@ -10,6 +10,7 @@ import { useMusicDetail } from '@/stores/music'
 import type { MusicInfoDto, MusicUrlDto } from '@/model/music'
 import router from '@/router'
 import { handleMusicTime } from '@/plugins/utils'
+import { ClickMusicAndPlay } from '@/hook/music/index'
 const SearchKeywords = useSearchKeywords()
 const globalStore = useGlobalStore()
 const MusicDetail = useMusicDetail()
@@ -117,7 +118,7 @@ async function test(record: SearchSongsDto) {}
             <!-- y:globalStore.windowHeight-330  -->
             <template #name="{ record }">
               <div class="flex items-center cursor-pointer">
-                <span @click="" @dblclick="getMusicUrlAndPlay(record)">
+                <span @click="" @dblclick="ClickMusicAndPlay(record)">
                   {{ record.name }}
                 </span>
               </div>

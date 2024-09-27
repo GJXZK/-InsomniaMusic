@@ -7,9 +7,11 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    Drawer_music: typeof import('./src/components/MusicDetail/drawer_music.vue')['default']
     HomeFooter: typeof import('./src/components/HomePage/home-footer.vue')['default']
     HomeHeader: typeof import('./src/components/HomePage/home-header.vue')['default']
     HomeSidebar: typeof import('./src/components/HomePage/home-sidebar.vue')['default']
+    MusicDetail: typeof import('./src/components/MusicDetail/MusicDetail.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     VanSearch: typeof import('vant/es')['Search']
