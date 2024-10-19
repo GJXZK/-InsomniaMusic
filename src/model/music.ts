@@ -5,6 +5,7 @@ export interface MusicUrlDto{
 }
 
 export interface MusicInfoDto {
+    id:string;
     name:string;
     singer:string;
     musicUrl:string;
@@ -25,4 +26,7 @@ export interface GeneralMusicDto{
     name:string;
     singer:string;
     id:string;
+}
+export interface MusicDetailDto {
+    
 }

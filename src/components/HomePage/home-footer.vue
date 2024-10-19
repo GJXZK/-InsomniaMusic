@@ -9,8 +9,10 @@ import {
   IconSkipPreviousFill,
   IconMuteFill,
   IconSoundFill,
-  IconUnorderedList
+  IconUnorderedList,
+  IconClose
 } from '@arco-design/web-vue/es/icon'
+import DrawerMusic from '@/components/MusicDetail/drawer_music.vue'
 
 let MusicPlayingTime = ref('')
 const MusicDetail = useMusicDetail()
@@ -28,17 +30,14 @@ const musicState = reactive({
 })
 // const musicList:Ref<> = reactive({})
 function changeState(state: boolean) {
-  if(state) {
+  if (state) {
     audioPlayer.value.play()
-  }else{
+  } else {
     audioPlayer.value.pause()
   }
   musicState.playState = !musicState.playState
-  
 }
-function changeMusic(state: string) {
-
-}
+function changeMusic(state: string) {}
 const audioPlayer = ref()
 let playProgress = ref(0)
 // 更新播放时间
@@ -46,13 +45,27 @@ function tiemupdate() {
   MusicPlayingTime.value = handleMusicTime(audioPlayer.value.currentTime)
   playProgress.value = (audioPlayer.value.currentTime / MusicDetail.musicTime) * 1000
 }
+// 点击歌曲头像弹出详情页
+const visible = ref(false)
+const drawerMusic = ref<any>()
+const handleClick = () => {
+  if (drawerMusic.value) {
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    
+    drawerMusic.value.getmusicdetail()
+  }
+  visible.value = true
+}
+const handleCancel = () => {
+  visible.value = false
+}
 function openMusicDetailCard() {}
 function dragSlider(number: number) {
   console.log(number)
 }
 </script>
 <template>
-  <div class="fixed bottom-0 w-full h-70px border-2 border-pink">
+  <div class="fixed bottom-0 w-full h-70px border-2 border-pink bg-#fff">
     <div class="h-full flex justify-between items-center">
       <!-- 音乐播放器 -->
       <audio
@@ -64,7 +77,7 @@ function dragSlider(number: number) {
       ></audio>
       <!-- bottom左侧 歌曲图标 点击图标弹出播放界面 歌曲信息 -->
       <div class="w-300px h-70px flex items-center">
-        <div class="w-70px flex items-center ml-30px" @click="openMusicDetailCard">
+        <div class="w-70px flex items-center ml-30px" @click="handleClick">
           <img
             :style="{ width: '70%' }"
             :src="MusicDetail.picUrl"
@@ -81,6 +94,9 @@ function dragSlider(number: number) {
           </div>
         </div>
       </div>
+      <a-drawer placement="bottom" :visible="visible" :header="false" :footer="false" height="100%">
+        <DrawerMusic ref="drawerMusic" />
+      </a-drawer>
       <!-- bottom中间 歌曲操作 上一首 下一首 暂停 进度条-->
       <div class="w-900px">
         <!-- 歌曲操作 -->
@@ -109,10 +125,9 @@ function dragSlider(number: number) {
             </div>
             <div class="flex justify-center">
               <!-- <span @click="musicState.musicList.length != 0 ? changeMusic('next') : ''"> -->
-                <span>
-                <icon-skip-next-fill size="25" color="pink"/>
-                  
-                </span>
+              <span>
+                <icon-skip-next-fill size="25" color="pink" />
+              </span>
             </div>
           </div>
         </div>
