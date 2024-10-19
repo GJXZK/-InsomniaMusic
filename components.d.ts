@@ -10,8 +10,10 @@ declare module 'vue' {
     HomeFooter: typeof import('./src/components/HomePage/home-footer.vue')['default']
     HomeHeader: typeof import('./src/components/HomePage/home-header.vue')['default']
     HomeSidebar: typeof import('./src/components/HomePage/home-sidebar.vue')['default']
+    Login: typeof import('./src/components/login/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    VanButton: typeof import('vant/es')['Button']
     VanSearch: typeof import('vant/es')['Search']
   }
 }
